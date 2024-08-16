@@ -1,10 +1,19 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿// Ignore Spelling: Dto
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
 namespace Garden.Create
 {
     public class CreateGardenService : IService
     {
+        ILogger<CreateGardenService> _logger;
+        public CreateGardenService(ILogger<CreateGardenService> logger)
+        {
+            _logger = logger;
+        }
+
         public async Task<DTO>? GetDtoFromBodyAsync(HttpRequest request)
         {
             DTO? Result = null;
@@ -23,5 +32,12 @@ namespace Garden.Create
             }
             return Result;
         }
+
+        public bool IsValid(DTO createRequestDto)
+        {
+            return RequestHelper.IsValid(createRequestDto);
+        }
+
+
     }
 }

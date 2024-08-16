@@ -11,6 +11,7 @@ namespace Garden.Create
         [JsonPropertyName("name")]
         public required string Name { get; set; }
 
+        [Range(0.0, double.MaxValue, ErrorMessage = "The field {0} must be greater than {1}.")]
         [JsonPropertyName("size")]
         public required double Size { get; set; }
 
