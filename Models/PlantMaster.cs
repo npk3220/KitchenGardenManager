@@ -1,7 +1,10 @@
-﻿namespace Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Models
 {
     public class PlantMaster
     {
+        [Key]
         public int PlantMasterId { get; set; }
         public required string PlantName { get; set; }
         public required string ScientificName { get; set; }

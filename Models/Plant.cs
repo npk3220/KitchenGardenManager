@@ -1,7 +1,10 @@
-﻿namespace Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Models
 {
     public class Plant
     {
+        [Key]
         public int PlantId { get; set; }
         public required string Name { get; set; }
         public int? PlantMasterId { get; set; } // 植物の種類、植物マスターに存在しない場合もある

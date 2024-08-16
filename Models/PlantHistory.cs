@@ -1,7 +1,10 @@
-﻿namespace Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Models
 {
     public class PlantHistory
     {
+        [Key]
         public int PlantHistoryId { get; set; }
         public int PlantId { get; set; }
         public int PlantStatusId { get; set; }

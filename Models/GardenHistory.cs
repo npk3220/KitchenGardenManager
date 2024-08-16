@@ -1,7 +1,10 @@
-﻿namespace Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Models
 {
     public class GardenHistory
     {
+        [Key]
         public int GardenHistoryId { get; set; }
         public int GardenId { get; set; }
         public string ActionType { get; set; } // 施肥や測定の種類
