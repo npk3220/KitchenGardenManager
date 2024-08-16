@@ -16,6 +16,9 @@
 # Mono auto generated files
 mono_crash.*
 
+# Azure Functions localsettings file
+local.settings.json
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
