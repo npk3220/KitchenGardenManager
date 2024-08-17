@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Garden.List;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Moq;
-using Xunit;
-using Garden.List;
 using Models;
+using Moq;
 
 namespace Garden.Tests
 {
@@ -98,6 +93,5 @@ namespace Garden.Tests
                 Assert.Equal("TestUser", result.First().UserName);
             }
         }
-
     }
 }
