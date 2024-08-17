@@ -9,14 +9,14 @@ namespace Models
         {
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Garden> Gardens { get; set; }
-        public DbSet<GardenHistory> GardenHistories { get; set; }
-        public DbSet<Plant> Plants { get; set; }
-        public DbSet<GardenPlantRelation> GardenPlantRelations { get; set; }
-        public DbSet<PlantMaster> PlantMasters { get; set; }
-        public DbSet<PlantHistory> PlantHistories { get; set; }
-        public DbSet<PlantStatusMaster> PlantStatusMasters { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Garden> Gardens { get; set; }
+        public virtual DbSet<GardenHistory> GardenHistories { get; set; }
+        public virtual DbSet<Plant> Plants { get; set; }
+        public virtual DbSet<GardenPlantRelation> GardenPlantRelations { get; set; }
+        public virtual DbSet<PlantMaster> PlantMasters { get; set; }
+        public virtual DbSet<PlantHistory> PlantHistories { get; set; }
+        public virtual  DbSet<PlantStatusMaster> PlantStatusMasters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
