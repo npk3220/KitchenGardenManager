@@ -16,7 +16,7 @@ namespace Models
         public virtual DbSet<GardenPlantRelation> GardenPlantRelations { get; set; }
         public virtual DbSet<PlantMaster> PlantMasters { get; set; }
         public virtual DbSet<PlantHistory> PlantHistories { get; set; }
-        public virtual  DbSet<PlantStatusMaster> PlantStatusMasters { get; set; }
+        public virtual DbSet<PlantStatusMaster> PlantStatusMasters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

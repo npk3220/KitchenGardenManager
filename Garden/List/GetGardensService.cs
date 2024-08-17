@@ -34,7 +34,7 @@ namespace Garden.List
                     UserName = query.ContainsKey("userName") ? query["userName"].ToString() : null,
                     GardenName = query.ContainsKey("gardenName") ? query["gardenName"].ToString() : null,
                     IsManagementEnded = (isManagementEnded is not null) ?
-                        bool.TryParse(isManagementEnded, out var isManagementEndedResult) && isManagementEndedResult : null,
+                        RequestHelper.StringToBool(isManagementEnded) : null,
                     /*RegistrationDate = !string.IsNullOrEmpty(registrationDateString)
                            ? DateTime.Parse(registrationDateString)
                            : null*/

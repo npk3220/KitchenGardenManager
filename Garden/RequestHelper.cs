@@ -17,5 +17,16 @@ namespace Garden
             }
             return Validator.TryValidateObject(dto, validationContext, validationResults, validateAllProperties: true);
         }
+
+        public static bool? StringToBool(string inputString)
+        {
+            bool.TryParse(inputString, out var isManagementEndedResult);
+
+            if (!isManagementEndedResult)
+            {
+                return null;
+            }
+            return bool.Parse(inputString);
+        }
     }
 }
