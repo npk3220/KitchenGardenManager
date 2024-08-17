@@ -1,6 +1,5 @@
-using Garden;
 using Garden.Create;
-using Garden.Update;
+using Garden.List;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,11 +18,20 @@ var host = new HostBuilder()
         options.UseSqlServer(Environment.GetEnvironmentVariable("SQL_CONNECTIONSTRING")));
 
         // IService‚ÌŽÀ‘•‚ð“o˜^
-        services.AddScoped<IService, CreateGardenService>();
-        services.AddScoped<IService, ShowGardenService>();
+        // services.AddScoped<IService, CreateGardenService>();
+        // services.AddScoped<ICreateGardenService, CreateGardenService>();
+        services.AddScoped<IGetGardensService, GetGardensService>();
+        //services.AddScoped<IService, ShowGardenService>();
 
         services.AddScoped<CreateGarden>(provider =>
-            new CreateGarden(provider.GetRequiredService<ILogger<CreateGarden>>(), provider.GetRequiredService<CreateGardenService>()));
+            new CreateGarden(
+                provider.GetRequiredService<ILogger<CreateGarden>>(),
+                provider.GetRequiredService<CreateGardenService>()));
+
+        services.AddScoped<GetGardens>(provider =>
+            new GetGardens(
+                provider.GetRequiredService<ILogger<GetGardens>>(),
+                provider.GetRequiredService<GetGardensService>()));
     })
 .Build();
 

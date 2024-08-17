@@ -19,12 +19,12 @@ namespace Garden.Create
         [Function("CreateGarden")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "garden")] HttpRequest request)
         {
-            var requestDTO = await _service.GetDtoFromBodyAsync(request);
+            /*            var requestDTO = await _service.GetDtoFromBodyAsync(request);
 
-            if (requestDTO is null)
-            {
-                return new BadRequestObjectResult("batRequest");
-            }
+                        if (requestDTO is null)
+                        {
+                            return new BadRequestObjectResult("batRequest");
+                        }*/
 
             // リクエストの妥当性を判定
 

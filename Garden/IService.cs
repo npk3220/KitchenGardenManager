@@ -1,10 +1,7 @@
-﻿
-using Microsoft.AspNetCore.Http;
-
-namespace Garden
+﻿namespace Garden
 {
     public interface IService
     {
-        public Task<DTO>? GetDtoFromBodyAsync(HttpRequest request);
+        // public Task<DTO>? GetDtoFromBodyAsync(HttpRequest request);
     }
 }
