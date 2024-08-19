@@ -7,31 +7,40 @@ namespace Garden.Create
 {
     public class CreateGarden
     {
-        private readonly IService _service;
+        private readonly ICreateGardenService _service;
         private readonly ILogger<CreateGarden> _logger;
 
-        public CreateGarden(ILogger<CreateGarden> logger, IService service)
+        public CreateGarden(ILogger<CreateGarden> logger, ICreateGardenService service)
         {
             _logger = logger;
             _service = service;
         }
 
+        // Todo：Createして、Blobに画像を入れるものを作成
+        // Todo：DBからのエラーをサンプリングする
+        // TODO: FOREACHについてチャレンジする
         [Function("CreateGarden")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "garden")] HttpRequest request)
         {
-            /*            var requestDTO = await _service.GetDtoFromBodyAsync(request);
+            _logger.LogInformation("C# HTTP trigger function processed a request.");
 
-                        if (requestDTO is null)
-                        {
-                            return new BadRequestObjectResult("batRequest");
-                        }*/
+            var requestDTO = await _service.GetDtoFromBodyAsync(request);
+
+            if (requestDTO is null)
+            {
+                return new BadRequestObjectResult("batRequest");
+            }
 
             // リクエストの妥当性を判定
+            if (!_service.IsValid(requestDTO))
+            {
+                return new BadRequestObjectResult("batRequest");
+            };
 
             // DBに保存
+            var garden = await _service.CreateGarden(requestDTO);
 
-            _logger.LogInformation("C# HTTP trigger function processed a request.");
-            return new OkObjectResult("Welcome to Garden Functions!");
+            return new OkObjectResult(_service.GetResponseDTO(garden));
         }
     }
 }

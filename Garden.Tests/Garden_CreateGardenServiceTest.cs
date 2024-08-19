@@ -3,6 +3,7 @@
 using Garden.Create;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Models;
 using Moq;
 using System.Text;
 using System.Text.Json;
@@ -11,145 +12,94 @@ namespace Garden.Tests
 {
     public class Garden_CreateGardenServiceTest
     {
-        static ILogger<CreateGardenService> _logger = Mock.Of<ILogger<CreateGardenService>>();
-        CreateGardenService _service = new(_logger); // ここでテストするメソッドが定義されているクラスをインスタンス化
+        private readonly Mock<HomeGardenContext> _mockContext;
+        private readonly Mock<ILogger<CreateGardenService>> _mockLogger;
+        private readonly CreateGardenService _service;
+
+        public Garden_CreateGardenServiceTest()
+        {
+            _mockContext = new Mock<HomeGardenContext>();
+            _mockLogger = new Mock<ILogger<CreateGardenService>>();
+            _service = new CreateGardenService(_mockLogger.Object, _mockContext.Object);
+        }
 
         [Fact]
         public async Task GetDtoFromBodyAsync_ValidJson_ReturnsDto()
         {
             // Arrange
-            var dto = new
+            var json = JsonSerializer.Serialize(new CreateGardenRequestDTO
             {
-                name = "Garden",
-                size = 25.0,
-                location = "Backyard",
-                memo = "Test memo"
-            };
+                UserId = 1,
+                Name = "Garden",
+                Location = "Location",
+                Size = 100,
+                ImagePath = "/images/garden.jpg"
+            });
 
-            var json = JsonSerializer.Serialize(dto);
-            var request = new Mock<HttpRequest>();
-            request.Setup(r => r.Body).Returns(new MemoryStream(Encoding.UTF8.GetBytes(json)));
+            var mockRequest = new Mock<HttpRequest>();
+            mockRequest.Setup(r => r.Body).Returns(new MemoryStream(Encoding.UTF8.GetBytes(json)));
 
             // Act
-            var result = await _service.GetDtoFromBodyAsync(request.Object);
+            var result = await _service.GetDtoFromBodyAsync(mockRequest.Object);
 
             // Assert
             Assert.NotNull(result);
-            var resultDto = Assert.IsType<CreateRequestDTO>(result);
-            Assert.Equal(dto.name, resultDto.Name);
-            Assert.Equal(dto.size, resultDto.Size);
-            Assert.Equal(dto.location, resultDto.Location);
-            Assert.Equal(dto.memo, resultDto.Memo);
+            Assert.Equal(1, result.UserId);
+            Assert.Equal("Garden", result.Name);
         }
 
         [Fact]
         public async Task GetDtoFromBodyAsync_InvalidJson_ReturnsNull()
         {
             // Arrange
-            var invalidJson = "{ invalid json }";
-            var request = new Mock<HttpRequest>();
-            request.Setup(r => r.Body).Returns(new MemoryStream(Encoding.UTF8.GetBytes(invalidJson)));
+            var mockRequest = new Mock<HttpRequest>();
+            mockRequest.Setup(r => r.Body).Returns(new MemoryStream(Encoding.UTF8.GetBytes("Invalid Json")));
 
             // Act
-            var result = await _service.GetDtoFromBodyAsync(request.Object);
+            var result = await _service.GetDtoFromBodyAsync(mockRequest.Object);
 
             // Assert
             Assert.Null(result);
         }
 
-        /*        [Fact]
-                public async Task GetDtoFromBodyAsync_NullBody_ReturnsNull()
-                {
-                    // Arrange
-                    var request = new Mock<HttpRequest>();
-                    request.Setup(r => r.Body).Returns((Stream)null);
-
-                    var service = new CreateGardenService();
-
-                    // Act
-                    var result = await service.GetDtoFromBodyAsync(request.Object);
-
-                    // Assert
-                    Assert.Null(result);
-                }*/
-
-
         [Fact]
-        public void IsValid_ValidDTO_ReturnsTrue()
+        public async Task CreateGarden_ValidRequest_SavesToDatabase()
         {
             // Arrange
-            var dto = new CreateRequestDTO
+            var requestDTO = new CreateGardenRequestDTO
             {
-                Name = "Garden",
-                Size = 25.0,
-                Location = "Backyard",
-                Memo = "Test memo"
+                UserId = 1,
+                Name = "New Garden",
+                Location = "Test Location",
+                Size = 100,
+                ImagePath = "/images/garden.jpg"
             };
 
-            // Act
-            var isValid = _service.IsValid(dto);
-
-            // Assert
-            Assert.True(isValid);
-        }
-
-        [Fact]
-        public void IsValid_InvalidName_ReturnsFalse()
-        {
-            // Arrange
-            var dto = new CreateRequestDTO
+            var garden = new Models.Garden
             {
-                Name = "TooLongName123",
-                Size = 25.0,
-                Location = "Backyard",
-                Memo = "Test memo"
+                GardenId = 1,//これを発行するのはDBなので、単体テストではこちらを指定する必要がある
+                Name = requestDTO.Name,
+                Location = requestDTO.Location,
+                Size = requestDTO.Size,
+                ImagePath = requestDTO.ImagePath,
+                UserId = requestDTO.UserId
             };
 
-            // Act
-            var isValid = _service.IsValid(dto);
-
-            // Assert
-            Assert.False(isValid);
-        }
-
-        [Fact]
-        public void IsValid_InvalidSize_ReturnsFalse()
-        {
-            // Arrange
-            var dto = new CreateRequestDTO
+            _mockContext.Setup(c => c.Gardens.Add(It.IsAny<Models.Garden>())).Callback<Models.Garden>(g =>
             {
-                Name = "Garden",
-                Size = -5.0,
-                Location = "Backyard",
-                Memo = "Test memo"
-            };
+                g.GardenId = 1; // GardenIdを手動で設定
+                garden = g;
+            });
+            _mockContext.Setup(c => c.SaveChangesAsync(default)).ReturnsAsync(1);
 
             // Act
-            var isValid = _service.IsValid(dto);
+            var result = await _service.CreateGarden(requestDTO);
 
             // Assert
-            Assert.False(isValid);
-        }
-
-        [Fact]
-        public void IsValid_MultipleErrors_ReturnsFalse()
-        {
-            // Arrange
-            var dto = new CreateRequestDTO
-            {
-                Name = "No",
-                Size = 0.0,
-                Location = "",  // Assuming location should not be empty unless otherwise stated
-                Memo = "Test memo"
-            };
-
-            // Act
-            var isValid = _service.IsValid(dto);
-
-            // Assert
-            Assert.False(isValid);
-            /*            Assert.Contains(validationErrors, e => e.Contains("The field Name must be a string with a minimum length of 3."));
-                        Assert.Contains(validationErrors, e => e.Contains("The Location field is required."));*/
+            Assert.Equal("New Garden", result.Name);
+            Assert.Equal(1, result.GardenId);
+            _mockContext.Verify(c => c.Gardens.Add(It.IsAny<Models.Garden>()), Times.Once);
+            _mockContext.Verify(c => c.SaveChangesAsync(default), Times.Once);
         }
 
     }

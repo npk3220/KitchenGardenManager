@@ -1,29 +1,34 @@
 ﻿// Ignore Spelling: Dto
 
+using Azure.Core;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Models;
 using System.Text.Json;
 
 namespace Garden.Create
 {
-    public class CreateGardenService : IService
+    public class CreateGardenService : ICreateGardenService
     {
         ILogger<CreateGardenService> _logger;
-        public CreateGardenService(ILogger<CreateGardenService> logger)
+        private readonly HomeGardenContext _dbContext;
+        public CreateGardenService(ILogger<CreateGardenService> logger, HomeGardenContext dbContext)
         {
             _logger = logger;
+            _dbContext = dbContext;
         }
 
-        public async Task<DTO>? GetDtoFromBodyAsync(HttpRequest request)
+        public async Task<CreateGardenRequestDTO>? GetDtoFromBodyAsync(HttpRequest request)
         {
-            DTO? Result = null;
+            CreateGardenRequestDTO? Result = null;
 
             try
             {
                 using (var reader = new StreamReader(request.Body))
                 {
                     var body = await reader.ReadToEndAsync();
-                    Result = JsonSerializer.Deserialize<CreateRequestDTO>(body);
+                    Result = JsonSerializer.Deserialize<CreateGardenRequestDTO>(body);
                 }
             }
             catch (JsonException e)
@@ -37,7 +42,33 @@ namespace Garden.Create
         {
             return RequestHelper.IsValid(createRequestDto);
         }
+        // Todo：fieldについてもテストできるかチャレンジする
 
+        public async Task<Models.Garden> CreateGarden(CreateGardenRequestDTO requestDTO)
+        {
+            var garden = new Models.Garden
+            {
+                Name = requestDTO.Name,
+                Location = requestDTO.Location,
+                Size = requestDTO.Size,
+                ImagePath = requestDTO.ImagePath,
+                IsManagementEnded = false,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                UserId = requestDTO.UserId
+            };
+            _dbContext.Gardens.Add(garden);
+            await _dbContext.SaveChangesAsync();
+            return garden;
+        }
 
+        public CreateGardenResponseDTO GetResponseDTO(Models.Garden garden)
+        {
+            return new CreateGardenResponseDTO
+            {
+                GardenId = garden.GardenId,
+                Message = "Garden created successfully."
+            };
+        }
     }
 }
