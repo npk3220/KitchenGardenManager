@@ -1,27 +1,39 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿/*using Garden.List;
+using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
 namespace Garden.Show
 {
-    public class ShowGardenService : IService
+    public class ShowGardenService : IShowGardenService
     {
-        public async Task<DTO>? GetDtoFromBodyAsync(HttpRequest request)
+        public ShowGardenRequestDTO? GetDtoFromQuery(HttpRequest request)
         {
-            DTO? Result = null;
+            GetGardensRequestDTO? result = null;
 
             try
             {
-                using (var reader = new StreamReader(request.Body))
+                var query = request.Query;
+
+                var isManagementEnded = query.ContainsKey("isManagementEnded") ? query["isManagementEnded"].ToString() : null;
+                // var registrationDateString = query.ContainsKey("registrationDate") ? query["registrationDate"].ToString() : null;
+
+                result = new GetGardensRequestDTO
                 {
-                    var body = await reader.ReadToEndAsync();
-                    Result = JsonSerializer.Deserialize<ShowRequestDTO>(body);
-                }
+                    UserName = query.ContainsKey("userName") ? query["userName"].ToString() : null,
+                    GardenName = query.ContainsKey("gardenName") ? query["gardenName"].ToString() : null,
+                    IsManagementEnded = (isManagementEnded is not null) ?
+                        RequestHelper.StringToBool(isManagementEnded) : null,
+                    *//*RegistrationDate = !string.IsNullOrEmpty(registrationDateString)
+                           ? DateTime.Parse(registrationDateString)
+                           : null*//*
+                };
             }
-            catch (JsonException e)
+            catch (Exception ex)
             {
-                Console.Write(e.Message);
+                Console.WriteLine(ex.Message);
             }
-            return Result;
+            return result;
         }
     }
 }
+*/

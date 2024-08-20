@@ -1,4 +1,4 @@
-/*using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
@@ -7,32 +7,26 @@ namespace Garden.Show
 {
     public class ShowGarden
     {
-        private readonly IService _service;
         private readonly ILogger<ShowGarden> _logger;
 
-        public ShowGarden(ILogger<ShowGarden> logger, IService service)
+        public ShowGarden(ILogger<ShowGarden> logger)
         {
             _logger = logger;
-            _service = service;
         }
 
-        [Function("CreateGarden")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "garden")] HttpRequest request)
+        [Function("ShowGarden")]
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "garden/{id}")] HttpRequest request, int id)
         {
-            var requestDTO = await _service.GetDtoFromBodyAsync(request);
+            _logger.LogInformation("C# HTTP trigger function processed a request.");
+            var names = request.Query["Name"].ToArray();
 
-            if (requestDTO is null)
+            if (names == null || names.Length == 0)
             {
-                return new BadRequestObjectResult("batRequest");
+                return new BadRequestObjectResult("Please pass at least one Name on the query string");
             }
 
-            // リクエストの妥当性を判定
-
-            // DBに保存
-
-            _logger.LogInformation("C# HTTP trigger function processed a request.");
-            return new OkObjectResult("Welcome to Garden Functions!");
+            var responseMessage = $"Garden Id is {id} Name is, {string.Join(", ", names)}";
+            return new OkObjectResult(responseMessage);
         }
     }
 }
-*/
