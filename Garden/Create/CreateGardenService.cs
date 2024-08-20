@@ -1,8 +1,6 @@
 ﻿// Ignore Spelling: Dto
 
-using Azure.Core;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Models;
 using System.Text.Json;

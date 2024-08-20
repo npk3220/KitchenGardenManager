@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
-
-namespace Garden.Create
+﻿namespace Garden.Create
 {
     public class CreateGardenResponseDTO : DTO
     {

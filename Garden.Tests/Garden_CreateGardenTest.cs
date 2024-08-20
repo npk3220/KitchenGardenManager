@@ -55,7 +55,7 @@ public class Garden_CreateGardenTest
 
         _mockService.Setup(s => s.GetDtoFromBodyAsync(It.IsAny<HttpRequest>())).ReturnsAsync(validRequestDTO);
         _mockService.Setup(s => s.IsValid(It.IsAny<DTO>())).Returns(true);
-        _mockService.Setup(s => s.CreateGarden(It.IsAny<CreateGardenRequestDTO>())).ReturnsAsync(new Models.Garden { GardenId = 1, Name = "test", Location="testLocation", Size= 0.1 });
+        _mockService.Setup(s => s.CreateGarden(It.IsAny<CreateGardenRequestDTO>())).ReturnsAsync(new Models.Garden { GardenId = 1, Name = "test", Location = "testLocation", Size = 0.1 });
         _mockService.Setup(s => s.GetResponseDTO(It.IsAny<Models.Garden>())).Returns(new CreateGardenResponseDTO { GardenId = 1, Message = "Garden created successfully." });
 
         // Act
