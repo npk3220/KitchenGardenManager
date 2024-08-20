@@ -20,13 +20,12 @@ namespace Garden
 
         public static bool? StringToBool(string inputString)
         {
-            bool.TryParse(inputString, out var isManagementEndedResult);
-
-            if (!isManagementEndedResult)
+            if (bool.TryParse(inputString, out var isManagementEndedResult))
             {
-                return null;
+                return isManagementEndedResult;
             }
-            return bool.Parse(inputString);
+
+            return null;
         }
     }
 }
